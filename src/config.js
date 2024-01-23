@@ -5,7 +5,6 @@ config();
 //window._env_?.API_KEY
 
 //Propias del sistema
-export const API_PORT = process.env?.API_PORT || 3001;
 export const API_JWT_KEY = process.env?.API_JWT_KEY || "example_key";
 export const FRONT_HOST = process.env?.FRONT_HOST || "http://localhost:3000";
 

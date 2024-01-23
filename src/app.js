@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import jwt from "jsonwebtoken";
 
-import { API_PORT, API_JWT_KEY } from "./config.js";
+import { API_JWT_KEY } from "./config.js";
 
 import swaggerUI from "swagger-ui-express";
 import swaggerSpec from "./openapi.json" assert { type: "json" };
@@ -18,7 +18,7 @@ import rHealthcheck from "./routes/r_healthcheck.js";
 const app = express();
 
 // Settings
-app.set("API_PORT", API_PORT);
+app.set("API_PORT", process.env?.PORT || 3001);
 
 // Middlewares
 app.use(express.json());

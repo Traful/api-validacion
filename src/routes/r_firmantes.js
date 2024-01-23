@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { getFirmanteByToken, reSendMail, forceValidation, setFirmanteRenaperByToken } from "../controllers/c_firmantes.js";
-import multer  from "multer";
+import multer from "multer";
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
