@@ -1,6 +1,6 @@
-import { config } from "dotenv";
+//import { config } from "dotenv";
 
-config();
+//config();
 
 //window._env_?.API_KEY
 
