@@ -45,7 +45,6 @@ ___
 
 |DE   |VARIABLE           |EJ                                  |OBSERVACIONES                                                                                    |
 |-----|-------------------|------------------------------------|-------------------------------------------------------------------------------------------------|
-|APP  |API_PORT           |3001                                |Puerto en el cual escucha la APP (ojo no es la del contenedor docker)                            |
 |APP  |API_JWT_KEY        |example_key                         |Se utiliza para encriptar las contraseñas de los usuarios                                        |
 |APP  |FRONT_HOST         |https://validacion.com.ar           |URL en la cual se expone el front que acompaña esta API                                          |
 |DB   |DB_USER            |userx_db                            |Usuario de la base de datos                                                                      |

@@ -17,8 +17,10 @@ import rHealthcheck from "./routes/r_healthcheck.js";
 
 const app = express();
 
+const PUERTO = process.env?.PORT || 3001;
+
 // Settings
-app.set("API_PORT", process.env?.PORT || 3001);
+app.set("API_PORT", PUERTO);
 
 // Middlewares
 app.use(express.json());
@@ -31,7 +33,7 @@ app.use(cors({
 }));
 
 app.use((req, res, next) => {
-	console.log(`[${req.method}] From: ${req.ip} - To: ${req.hostname}:${API_PORT}${req.originalUrl}`);
+	console.log(`[${req.method}] From: ${req.ip} - To: ${req.hostname}:${PUERTO}${req.originalUrl}`);
 	next();
 });
 
