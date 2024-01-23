@@ -1,0 +1,958 @@
+openapi: 3.0.0
+info:
+  title: Api Validación de Identidad
+  description: Swiss Medical - Api Rest del servicio de __Validación de Identidad__.
+  contact:
+    name: "Equipo Desarrollo"
+    email: "hans.araujo@smg-life.com.ar"
+  version: "1.0.1"
+servers:
+  - url: http://localhost:3001/
+    description: Pruebas desarrollo [local]
+  - url: https://onboarding-smgdev.clubswiss.com.ar/
+    description: En ambiente
+tags:
+  - name: login
+    description: Login de usuarios, Obtención/Validación de Token
+  - name: users
+    description: Usuarios ABM.
+  - name: solicitudes
+    description: Llamadas referentes a las solicitudes de validación/firma
+  - name: firmantes
+    description: Llamadas referentes a los firmantes
+paths:
+  /api/token/validate/{token}:
+    get:
+      tags:
+        - login
+      summary: Validación de Token.
+      description: Se valida si el token es válido, de estar valido se verifica si aún está vigente o ya expiro.
+      operationId: operationId_1
+      parameters:
+        - in: path
+          name: token
+          required: true
+          schema:
+            type: string
+            example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6I...
+          description: Bearer Token
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  msg:
+                    type: string
+                    example: ""
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      email:
+                        type: string
+                        example: "johndoe@server.com"
+                      firstname:
+                        type: string
+                        example: "John"
+                      lastname:
+                        type: string
+                        example: "Doe"
+                      jwt:
+                        type: string
+                        example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6I..."
+                      errores:
+                        type: array 
+                        items: 
+                          type: string
+                        example: []
+        401:
+          $ref: '#/components/requestBodies/Unauthorized'
+  /api/login:
+    post:
+      tags:
+        - login
+      summary: Login de usuario.
+      description: Para obtener el token (Bearer JWT Token) en base a las credenciales.
+      operationId: operationId_2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  example: "johndoe@server.com"
+                password:
+                  type: string
+                  example: "123456"
+        description: Credenciales del usuario registrado en el sistema.
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  msg:
+                    type: string
+                    example: ""
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      email:
+                        type: string
+                        example: "johndoe@server.com"
+                      firstname:
+                        type: string
+                        example: "John"
+                      lastname:
+                        type: string
+                        example: "Doe"
+                      jwt:
+                        type: string
+                        example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6I..."
+                      errores:
+                        type: array 
+                        items: 
+                          type: string
+                        example: []
+        401:
+          $ref: '#/components/requestBodies/Unauthorized'
+        409:
+          $ref: '#/components/requestBodies/Conflict'
+  /api/solicitudes:
+    get:
+      tags:
+        - solicitudes
+      summary: Listado de solicitudes.
+      description: Se listan todas las solicitudes cargadas en el sistema.
+      operationId: operationId_3
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  msg:
+                    type: string
+                    example: ""
+                  data:
+                    type: array
+                    items:
+                       $ref: '#/components/schemas/solicitud'
+                  errores:
+                    type: array 
+                    items: 
+                      type: string
+                    example: []
+        401:
+          $ref: '#/components/requestBodies/Unauthorized'
+      security:
+        - bearerAuth: []
+  /api/solicitud/{id}:
+    get:
+      tags:
+        - solicitudes
+      summary: Lista los datos de una solicitud.
+      description: Se listan todos los datos de una solicitud en base a su ID (identificador único).
+      operationId: operationId_4
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: ID (identificador único) de la solicitud.
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  msg:
+                    type: string
+                    example: ""
+                  data:
+                    type: array
+                    items:
+                       $ref: '#/components/schemas/solicitud'
+                  errores:
+                    type: array 
+                    items: 
+                      type: string
+                    example: []
+        401:
+          $ref: '#/components/requestBodies/Unauthorized' 
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - solicitudes
+      summary: Elimina los datos de una solicitud.
+      description: Se elimina una solicitud en base a su ID (identificador único).
+      operationId: operationId_5
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: ID (identificador único) de la solicitud.
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  msg:
+                    type: string
+                    example: ""
+        401:
+          $ref: '#/components/requestBodies/Unauthorized'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  msg:
+                    type: string
+                    example: "Ocurrió un error al procesar la solicitud"
+      security:
+        - bearerAuth: []
+  /api/solicitudes/estado/{idEstado}:
+    get:
+      tags:
+        - solicitudes
+      summary: Lista los datos de las solicitud en estado determinado.
+      description: Se listan todas los datos de las solicitudes en un determinado estado, ID (identificador único del estado).
+      operationId: operationId_6
+      parameters:
+        - in: path
+          name: idEstado
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: ID (identificador único) del estado de la solicitud.
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  msg:
+                    type: string
+                    example: ""
+                  data:
+                    type: array
+                    items:
+                       type: object
+                       properties:
+                        id:
+                          type: integer
+                          example: 1
+                        nrosolicitud:
+                          type: string
+                          example: ID_SOLICITUD
+                        f_ingreso:
+                          type: string
+                          example: 2023-11-09T00:00:00.000Z
+                        f_estado:
+                          type: string
+                          example: 2023-11-09T00:00:00.000Z
+                        idestado:
+                          type: integer
+                          example: 1
+                  errores:
+                    type: array 
+                    items: 
+                      type: string
+                    example: []
+        401:
+          $ref: '#/components/requestBodies/Unauthorized' 
+      security:
+        - bearerAuth: []
+  /api/solicitud/{id}/firmantes:
+    get:
+      tags:
+        - solicitudes
+      summary: Lista los datos de los firmantes de una solicitud.
+      description: Se listan todos los firmantes de una solicitud en base al ID de la misma.
+      operationId: operationId_7
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: ID (identificador único) de la solicitud.
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  msg:
+                    type: string
+                    example: ""
+                  data:
+                    type: array
+                    items:
+                       $ref: '#/components/schemas/firmante'
+                  errores:
+                    type: array 
+                    items: 
+                      type: string
+                    example: []
+        401:
+          $ref: '#/components/requestBodies/Unauthorized'
+      security:
+        - bearerAuth: []
+  /api/solicitud:
+    post:
+      tags:
+        - solicitudes
+      summary: Alta de solicitud.
+      description: Alta de una nueva solicitud de validación y firma.
+      operationId: operationId_8
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - nrosolicitud
+                - workflowid
+                - workflowlabel
+                - adobemessage
+                - archivos
+                - firmantes
+              properties:
+                nrosolicitud:
+                  type: string
+                  example: "ID_SOLICITUD_VT"
+                workflowid:
+                  type: string
+                  example: "xnjklop-31"
+                workflowlabel:
+                  type: string
+                  example: "Label 1"
+                adobemessage:
+                  type: string
+                  example: "messageInfo - defaultValue"
+                archivos:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                firmantes:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      role:
+                        type: string
+                      label:
+                        type: string
+                      authenticationmethod: 
+                        type: string
+                      sexo:
+                        type: string
+                      dni:
+                        type: string
+                      email:
+                        type: string
+                      phone:
+                        type: string
+                      validarenaper:
+                        type: boolean
+                  example: 
+                    - role: SIGNER
+                      label: Asegurado
+                      authenticationmethod: NONE
+                      sexo: M
+                      dni: 27310264
+                      email: juanmanuel.arancibia@smg.com.ar
+                      phone: 1133000352
+                      validarenaper: false
+        description: Datos de la nueva solicitud.
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  msg:
+                    type: string
+                    example: ""
+                  data:
+                    type: object
+                    properties:
+                      insertedId:
+                        type: integer
+                        example: 1
+                      rowsAffected:
+                        type: integer
+                        example: 1
+                  errores:
+                    type: array 
+                    items: 
+                      type: string
+                    example: []
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  msg:
+                    type: string
+                    example: "Hay errores en los datos suministrados"
+                  data:
+                    type: string
+                    example: null
+                  errores:
+                    type: array 
+                    items: 
+                      type: string
+                    example: ["firmantes no es un array válido."]
+        401:
+          $ref: '#/components/requestBodies/Unauthorized'
+      security:
+        - bearerAuth: []
+
+  /api/user:
+    post:
+      tags:
+        - users
+      summary: Crea un nuevo usuario.
+      description: Crea un nuevo usuario.
+      operationId: operationId_u1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: johndoe@server.com
+                firstname:
+                  type: string
+                  example: John
+                lastname:
+                  type: string
+                  example: Doe
+                password:
+                  type: string
+                  example: 1234
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  msg:
+                    type: string
+                    example: ""
+                  data:
+                    $ref: '#/components/schemas/renaseg'
+                  errores:
+                    type: array 
+                    items:
+                      type: string
+                    example: []
+        409:
+          $ref: '#/components/requestBodies/Conflict'
+        401:
+          $ref: '#/components/requestBodies/Unauthorized'
+      security:
+        - bearerAuth: []
+  /api/user/{id}:
+    delete:
+      tags:
+        - users
+      summary: Elimina los datos de un usuario.
+      description: Se elimina los datos de un usuario en base a su ID (identificador único).
+      operationId: operationId_u2
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: ID (identificador único) del registro.
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  msg:
+                    type: string
+                    example: ""
+        401:
+          $ref: '#/components/requestBodies/Unauthorized'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  msg:
+                    type: string
+                    example: "Ocurrió un error al procesar la solicitud"
+      security:
+        - bearerAuth: []
+
+  /api/firmante/{token}:
+    get:
+      tags:
+        - firmantes
+      summary: Datos de un firmante basado en el token generado.
+      description: Datos de un firmante en base a su Token, esta llamada se utiliza para dar inicio al proceso de validación de identidad.
+      operationId: operationId_9
+      parameters:
+        - in: path
+          name: token
+          required: true
+          schema:
+            type: string
+            example: c649a68f-7db9-4b12-88c7-ad4e3c6cb4a0--1
+          description: Token (único) del firmante para una solicitud.
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  msg:
+                    type: string
+                    example: ""
+                  data:
+                    type: array
+                    items:
+                       $ref: '#/components/schemas/firmante'
+                  errores:
+                    type: array 
+                    items: 
+                      type: string
+                    example: []
+        401:
+          $ref: '#/components/requestBodies/Unauthorized' 
+      security:
+        - bearerAuth: []
+  /api/firmante/{id}/resendmail:
+    get:
+      tags:
+        - firmantes
+      summary: Reenvío de mail.
+      description: Reenvío del mail solicitando que se inicie el proceso de validación.
+      operationId: operationId_10
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: Identificador único del registro del firmante.
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  msg:
+                    type: string
+                    example: "Mail de solicitud de validación enviado a johndoe@server.com"
+                  data:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                        example: johndoe@server.com
+                      token:
+                        type: string
+                        example: 95eba9db-230e-40fd-83fb-d3c045f0300e--1
+                      mailid:
+                        type: string
+                        example: 75cef919-e6b5-4097-9348-3ffdb4b6f4fb
+                  errores:
+                    type: array 
+                    items: 
+                      type: string
+                    example: []
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  msg:
+                    type: string
+                    example: "Ocurrió un error al intentar realizar la operación solicitada."
+        401:
+          $ref: '#/components/requestBodies/Unauthorized' 
+      security:
+        - bearerAuth: []
+  /api/firmante/{id}/force/validation:
+    get:
+      tags:
+        - firmantes
+      summary: Forzar estado de validación de un firmante.
+      description: Se fuerza el estado como válido de un firmante.
+      operationId: operationId_11
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: Identificador único del registro del firmante.
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  msg:
+                    type: string
+                    example: "Proceso concluido exitosamente."
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  msg:
+                    type: string
+                    example: "Ocurrió un error al intentar realizar la operación solicitada."
+        401:
+          $ref: '#/components/requestBodies/Unauthorized'
+      security:
+        - bearerAuth: []
+  /api/firmante/{token}/renaper:
+    post:
+      tags:
+        - firmantes
+      summary: Guadar datos del firmante, validar y guardar respuesta.
+      description: En esta llamda se envían desde el font las imágenes (foto perfil, foto DNI frente, foto DNI dorso), estos datos se guardan en la DB, se envía a Renaper (Api Manager) la foto de perfil y los datos de sexo y nro de DNI, el servicio response, se guarda la respuesta y se notifica al front el resultado de la validación (eespuesta del servicio).
+      operationId: operationId_12
+      parameters:
+        - in: path
+          name: token
+          required: true
+          schema:
+            type: string
+            example: c649a68f-7db9-4b12-88c7-ad4e3c6cb4a0--1
+          description: Token (único) del firmante para una solicitud.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - idtramite
+                - sexo
+                - dni
+                - selfie
+                - frente
+                - dorso
+              properties:
+                idtramite:
+                  type: string
+                  example: "ID_SOLICITUD"
+                sexo:
+                  type: string
+                  example: F
+                dni:
+                  type: integer
+                  example: 29823457
+                selfie:
+                  type: string
+                  format: binary
+                frente:
+                  type: string
+                  format: binary
+                dorso:
+                  type: string
+                  format: binary
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  msg:
+                    type: string
+                    example: ""
+                  data:
+                    $ref: '#/components/schemas/renaseg'
+                  errores:
+                    type: array 
+                    items:
+                      type: string
+                    example: []
+        409:
+          $ref: '#/components/requestBodies/Conflict'
+        401:
+          $ref: '#/components/requestBodies/Unauthorized'
+      security:
+        - bearerAuth: []
+components:
+  schemas:
+    renaseg:
+      type: object
+      properties:
+        codigo:
+          type: integer
+          example: 200
+        type:
+          type: string
+          example: Success
+        detalle:
+          type: string
+          example: Probing successfully performed
+        mensaje:
+          type: string
+          example: SuccessProbing
+        score:
+          type: integer
+          example: 91
+    image:
+      type: object
+      properties:
+        type:
+          type: string
+          example: "Buffer"
+        data:
+          type: array
+          items:
+            type: integer
+          example: [137, 80, 78, 71, 13, 10, 26, 10, 0]
+    firmante:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        idsolicitud:
+          type: integer
+          example: 1
+        sexo:
+          type: string
+          example: "M"
+        dni:
+          type: string
+          example: "18827252"
+        email:
+          type: string
+          example: "johndoe@server.com"
+        phone:
+          type: string
+          example: "0112657575514"
+        validarenaper:
+          type: integer
+          example: 1
+        token:
+          type: string
+          example: "f6e4bb8f-39dc-471b-8034-d13650717548--1"
+        selfie:
+          $ref: '#/components/schemas/image'
+        frente:
+          $ref: '#/components/schemas/image'
+        dorso:
+          $ref: '#/components/schemas/image'
+        intentos:
+          type: integer
+          example: 2
+        fechavalid:
+          type: string
+          example: "2023-09-11T00:00:00.000Z"
+        mailid:
+          type: string
+          example: "0a0e76f7-12f9-4163-9868-5d0082de2451"
+        idvalidacionestado:
+          type: integer
+          example: 4
+        detalle:
+          type: string
+          example: "{\"codigo\":200,\"mensaje\":\"OK\",\"data\":{\"codigo\":200,\"type\":\"Success\",\"detalle\":\"Probing successfully performed\",\"mensaje\":\"SuccessProbing\",\"score\":92}}"
+    solicitud:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        nrosolicitud:
+          type: string
+          example: "ID_SOLICITUD_VT"
+        f_ingreso:
+          type: string
+          example: "2023-09-11T00:00:00.000Z"
+        f_estado:
+          type: string
+          example: "2023-09-11T00:00:00.000Z"
+        idestado:
+          type: integer
+          example: 1
+        totFirm:
+          type: integer
+          example: 3
+        estado:
+          type: string
+          example: "En Proceso"
+  requestBodies:
+    Conflict:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ok:
+                type: boolean
+                example: false
+              msg:
+                type: string
+                example: "Hay errores en los datos suministrados"
+              data:
+                type: object
+                example: null
+              errores:
+                type: array 
+                items:
+                  type: string
+                example: ["[field] es un valor requerido", "[field] no debe ser menor a 1", "etc..."]
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ok:
+                type: boolean
+                example: false
+              msg:
+                type: string
+                example: "JsonWebTokenError - invalid token"
+              data:
+                type: object
+                example: null
+              errores:
+                type: array 
+                items: 
+                  type: string
+                example: []
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
