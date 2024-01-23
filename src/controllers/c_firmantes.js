@@ -77,13 +77,13 @@ export const reSendMail = async (req, res) => {
 
 	try {
 		let id = req.params.id;
-		let dataFirmante = await query("SELECT email, token FROM firmantes WHERE id = ?", [id])[0];
-
+		let dataFirmante = await query("SELECT email, token FROM firmantes WHERE id = ?", [id]);
+		dataFirmante = dataFirmante[0];
 		let am = await getApiManagerData();
 		let respMail = await sendMail(dataFirmante.email, dataFirmante.token, am.token);
 		if(respMail.ok) {
 			let tToken = respMail.respuestaTerin.ADDMSG_OK;
-			results = await query("UPDATE firmantes SET mailid = ? WHERE id = ?", [tToken, id]);
+			await query("UPDATE firmantes SET mailid = ? WHERE id = ?", [tToken, id]);
 			resp.ok = true;
 			resp.msg = `Mail de solicitud de validación enviado a ${dataFirmante.email}`;
 			resp.data = {
@@ -92,6 +92,7 @@ export const reSendMail = async (req, res) => {
 			};
 		}
 	} catch (error) {
+		console.log(error);
 		resp.msg = error.message;
 	}
 	res.status(resp.ok ? 200 : 409).json(resp);

@@ -11,6 +11,10 @@
   },
   "servers": [
     {
+      "url": "https://api-validacion-production.up.railway.app/",
+      "description": "En Railway"
+    },
+    {
       "url": "http://localhost:3001/",
       "description": "Pruebas desarrollo [local]"
     },
